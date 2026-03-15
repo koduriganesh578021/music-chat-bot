@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>music Chatbot</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#111827;
+color:#e5e7eb;
+height:100vh;
+overflow:hidden;
+}
+
+.app-shell{
+display:grid;
+grid-template-columns:320px 1fr;
+height:100vh;
+overflow:hidden;
+}
+
+.sidebar{
+background:#171717;
+padding:18px 14px;
+border-right:1px solid #2b2b2b;
+display:flex;
+flex-direction:column;
+height:100vh;
+box-sizing:border-box;
+overflow:hidden;
+}
+
+.brand{
+font-size:22px;
+font-weight:700;
+margin-bottom:18px;
+}
+
+.new-chat-btn{
+width:100%;
+padding:14px 16px;
+border:none;
+border-radius:14px;
+background:#2a2a2a;
+color:#f5f5f5;
+font-size:16px;
+text-align:left;
+cursor:pointer;
+margin-bottom:22px;
+}
+
+.new-chat-btn:hover{
+background:#353535;
+}
+
+.section-label{
+font-size:14px;
+color:#a3a3a3;
+margin-bottom:10px;
+padding:0 6px;
+text-transform:uppercase;
+letter-spacing:.08em;
+}
+
+.history-list{
+flex:1;
+min-height:0;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:8px;
+padding-right:4px;
+}
+
+.history-item{
+background:transparent;
+border:none;
+color:#f3f4f6;
+text-align:left;
+padding:12px 12px;
+border-radius:12px;
+cursor:pointer;
+font-size:16px;
+line-height:1.35;
+}
+
+.history-item:hover,
+.history-item.active{
+background:#2d2d2d;
+}
+
+.history-time{
+display:block;
+font-size:12px;
+color:#9ca3af;
+margin-top:4px;
+}
+
+.empty-history{
+color:#9ca3af;
+padding:0 8px;
+}
+
+.main-panel{
+background:#f3f4f6;
+color:#111827;
+display:flex;
+flex-direction:column;
+padding:28px;
+box-sizing:border-box;
+height:100vh;
+overflow:hidden;
+min-height:0;
+}
+
+.chat-header{
+margin-bottom:18px;
+padding:0 6px;
+}
+
+.chat-header h1{
+margin:0 0 6px;
+font-size:28px;
+}
+
+.chat-header p{
+margin:0;
+color:#4b5563;
+}
+
+#chat-box{
+flex:1;
+background:#232323;
+border:1px solid #2f2f2f;
+border-radius:24px;
+padding:34px 36px;
+overflow-y:auto;
+box-shadow:inset 0 1px 0 rgba(255,255,255,.03), 0 18px 40px rgba(15,23,42,.12);
+min-height:420px;
+min-width:0;
+display:flex;
+flex-direction:column;
+gap:28px;
+}
+
+.message{
+max-width:min(980px, 100%);
+width:fit-content;
+padding:0;
+border-radius:0;
+white-space:pre-wrap;
+line-height:1.5;
+box-shadow:none;
+border:none;
+}
+
+.message.user{
+margin-left:auto;
+max-width:min(68%, 760px);
+background:#0d4d8f;
+color:#ffffff;
+border-radius:26px;
+padding:16px 20px;
+}
+
+.message.bot{
+width:min(86%, 980px);
+color:#f5f5f5;
+}
+
+.message-body{
+font-size:16px;
+line-height:1.85;
+word-break:break-word;
+}
+
+.message-body p{
+margin:0 0 18px;
+}
+
+.message-body p:last-child{
+margin-bottom:0;
+}
+
+.message-body ul,
+.message-body ol{
+margin:0 0 18px 24px;
+padding:0;
+}
+
+.message-body li{
+margin-bottom:10px;
+}
+
+.message-body code{
+font-family:Consolas,monospace;
+font-size:.95em;
+background:rgba(255,255,255,.08);
+padding:2px 6px;
+border-radius:6px;
+}
+
+.message-body em{
+font-style:italic;
+}
+
+.message-body strong{
+font-weight:700;
+}
+
+.message-body br + br{
+content:"";
+display:block;
+margin-top:10px;
+}
+
+.message.bot .message-body{
+font-size:17px;
+line-height:1.95;
+color:#f3f4f6;
+}
+
+.welcome-card{
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:#a3a3a3;
+font-size:18px;
+}
+
+.input-area{
+display:flex;
+gap:12px;
+margin-top:18px;
+align-items:stretch;
+}
+
+#user-input{
+flex:1;
+padding:16px 18px;
+border:1px solid #bfc8d7;
+border-radius:20px;
+font-size:16px;
+outline:none;
+box-shadow:0 6px 16px rgba(15,23,42,.08);
+}
+
+#user-input:focus{
+border-color:#2563eb;
+box-shadow:0 0 0 3px rgba(37,99,235,.12);
+}
+
+.send-btn{
+padding:16px 22px;
+border:none;
+border-radius:20px;
+background:#2563eb;
+color:#fff;
+font-size:16px;
+cursor:pointer;
+box-shadow:0 10px 24px rgba(37,99,235,.28);
+}
+
+.send-btn:hover{
+background:#1d4ed8;
+}
+
+@media (max-width: 900px){
+body{
+height:auto;
+overflow:auto;
+}
+
+.app-shell{
+grid-template-columns:1fr;
+height:auto;
+overflow:visible;
+}
+
+.sidebar{
+height:auto;
+max-height:320px;
+overflow:visible;
+}
+
+.main-panel{
+padding:18px;
+height:auto;
+overflow:visible;
+}
+
+#chat-box{
+min-height:320px;
+padding:18px;
+}
+
+.message.user,
+.message.bot{
+width:auto;
+max-width:100%;
+}
+}
+</style>
+</head>
+
+<body>
+<div class="app-shell">
+<aside class="sidebar">
+<div class="brand">music</div>
+<button class="new-chat-btn" onclick="startNewChat()">+ New chat</button>
+<div class="section-label">Recents</div>
+<div id="history-list" class="history-list">
+<div class="empty-history">No chats yet</div>
+</div>
+</aside>
+
+<main class="main-panel">
+<div class="chat-header">
+<h1>Music Chatbot</h1>
+<p>Ask something new, or reopen a recent chat from the left sidebar.</p>
+</div>
+
+<div id="chat-box">
+<div class="welcome-card">Your conversation will appear here.</div>
+</div>
+
+<div class="input-area">
+<input type="text" id="user-input" placeholder="Type message...">
+<button class="send-btn" onclick="sendMessage()">Send</button>
+</div>
+</main>
+</div>
+
+<script>
+let chatHistory = []
+let activeHistoryIndex = null
+
+function escapeHtml(text){
+return text
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+}
+
+function formatInlineMarkdown(text){
+return text
+.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
+.replace(/\*(.+?)\*/g,"<em>$1</em>")
+.replace(/`([^`]+)`/g,"<code>$1</code>")
+}
+
+function renderMessageHtml(text){
+const escaped = escapeHtml(text).replace(/\r\n/g,"\n")
+const blocks = escaped.split(/\n\s*\n/)
+
+return blocks.map(block => {
+const trimmed = block.trim()
+if(!trimmed) return ""
+
+const lines = trimmed.split("\n")
+const isBulletList = lines.every(line => /^(\*|-)\s+/.test(line.trim()))
+const isNumberList = lines.every(line => /^\d+\.\s+/.test(line.trim()))
+
+if(isBulletList){
+return `<ul>${lines.map(line => `<li>${formatInlineMarkdown(line.trim().replace(/^(\*|-)\s+/,""))}</li>`).join("")}</ul>`
+}
+
+if(isNumberList){
+return `<ol>${lines.map(line => `<li>${formatInlineMarkdown(line.trim().replace(/^\d+\.\s+/,""))}</li>`).join("")}</ol>`
+}
+
+return `<p>${formatInlineMarkdown(lines.join("<br>"))}</p>`
+}).join("")
+}
+
+function truncateText(text, maxLength=32){
+if(text.length <= maxLength) return text
+return text.slice(0, maxLength).trim() + "..."
+}
+
+function formatTimestamp(timestamp){
+const date = new Date(timestamp)
+if(Number.isNaN(date.getTime())) return ""
+return date.toLocaleString()
+}
+
+function renderEmptyState(){
+document.getElementById("chat-box").innerHTML = '<div class="welcome-card">Your conversation will appear here.</div>'
+}
+
+function renderConversation(entry){
+const chatBox = document.getElementById("chat-box")
+chatBox.innerHTML = `
+<div class="message user">
+<div class="message-body">${renderMessageHtml(entry.user)}</div>
+</div>
+<div class="message bot">
+<div class="message-body">${renderMessageHtml(entry.bot)}</div>
+</div>
+`
+chatBox.scrollTop = chatBox.scrollHeight
+}
+
+function renderHistoryList(){
+const historyList = document.getElementById("history-list")
+
+if(chatHistory.length === 0){
+historyList.innerHTML = '<div class="empty-history">No chats yet</div>'
+return
+}
+
+historyList.innerHTML = chatHistory
+.map((entry, index) => `
+<button class="history-item ${index === activeHistoryIndex ? "active" : ""}" onclick="openHistory(${index})">
+${escapeHtml(truncateText(entry.user))}
+<span class="history-time">${escapeHtml(formatTimestamp(entry.timestamp))}</span>
+</button>
+`)
+.reverse()
+.join("")
+}
+
+function openHistory(index){
+activeHistoryIndex = index
+renderHistoryList()
+renderConversation(chatHistory[index])
+}
+
+function startNewChat(){
+activeHistoryIndex = null
+renderHistoryList()
+renderEmptyState()
+document.getElementById("user-input").focus()
+}
+
+function addLiveConversation(userMessage, botMessage){
+const chatBox = document.getElementById("chat-box")
+chatBox.innerHTML = `
+<div class="message user">
+<div class="message-body">${renderMessageHtml(userMessage)}</div>
+</div>
+<div class="message bot">
+<div class="message-body">${renderMessageHtml(botMessage)}</div>
+</div>
+`
+chatBox.scrollTop = chatBox.scrollHeight
+}
+
+async function loadHistory(){
+const response = await fetch("/history")
+const data = await response.json()
+chatHistory = data.history || []
+renderHistoryList()
+
+if(activeHistoryIndex !== null && chatHistory[activeHistoryIndex]){
+renderConversation(chatHistory[activeHistoryIndex])
+}
+}
+
+async function sendMessage(){
+const input = document.getElementById("user-input")
+const message = input.value.trim()
+
+if(message === "") return
+
+input.value = ""
+
+const response = await fetch("/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({message:message})
+})
+
+const data = await response.json()
+
+if(data.reply){
+addLiveConversation(message, data.reply)
+await loadHistory()
+activeHistoryIndex = chatHistory.length - 1
+renderHistoryList()
+}else{
+addLiveConversation(message, data.error || "Something went wrong.")
+}
+}
+
+document.getElementById("user-input").addEventListener("keydown", function(event){
+if(event.key === "Enter"){
+sendMessage()
+}
+})
+
+loadHistory()
+</script>
+</body>
+</html>
